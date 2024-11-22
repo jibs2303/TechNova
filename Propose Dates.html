@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propose Dates</title>
+    <style>
+        /* Add the styles here... (same as before) */
+    </style>
+</head>
+<body>
+
+    <h2>Vote for the Best Outing Date</h2>
+
+    <div class="form-group">
+        <label for="dateInput">Select Date:</label>
+        <input type="date" id="dateInput">
+    </div>
+    <div class="form-group">
+        <button id="addDateBtn">Add Date</button>
+    </div>
+
+    <div class="dates-container" id="datesList">
+        <!-- Dynamic dates and voting buttons will appear here -->
+    </div>
+
+    <script>
+        let groupData = JSON.parse(localStorage.getItem("groupData")) || { dates: [] };
+
+        function renderDates() {
+            const datesList = document.getElementById("datesList");
+            datesList.innerHTML = '';
+
+            groupData.dates.forEach((dateObj, index) => {
+                const dateItem = document.createElement("div");
+                dateItem.classList.add("date-item");
+
+                const dateDisplay = document.createElement("div");
+                dateDisplay.textContent = `${dateObj.date} - Votes: ${dateObj.votes}`;
+
+                const voteBtn = document.createElement("button");
+                voteBtn.classList.add("vote-btn");
+                voteBtn.textContent = "Vote";
+
+                const username = prompt("Enter your username to vote:");
+                if (username && !dateObj.voters.includes(username)) {
+                    voteBtn.addEventListener("click", () => {
+                        dateObj.voters.push(username);
+                        dateObj.votes++;
+                        localStorage.setItem("groupData", JSON.stringify(groupData));
+                        renderDates();
+                        checkVotingCompletion();
+                    });
+                } else {
+                    voteBtn.disabled = true;
+                    voteBtn.textContent = "You have voted";
+                }
+
+                const votersList = document.createElement("div");
+                votersList.classList.add("voters");
+                votersList.textContent = "Voters: " + (dateObj.voters.length > 0 ? dateObj.voters.join(", ") : "No votes yet");
+
+                dateItem.appendChild(dateDisplay);
+                dateItem.appendChild(voteBtn);
+                dateItem.appendChild(votersList);
+                datesList.appendChild(dateItem);
+            });
+        }
+
+        document.getElementById("addDateBtn").addEventListener("click", () => {
+            const dateInput = document.getElementById("dateInput").value;
+
+            if (dateInput) {
+                groupData.dates.push({ date: dateInput, votes: 0, voters: [] });
+                localStorage.setItem("groupData", JSON.stringify(groupData));
+                renderDates();
+                document.getElementById("dateInput").value = '';
+            } else {
+                alert("Please select a valid date.");
+            }
+        });
+
+        function checkVotingCompletion() {
+            const allVoted = groupData.dates.every(dateObj => dateObj.voters.length > 0);
+            
+            if (allVoted) {
+                localStorage.setItem("votingResults", JSON.stringify(groupData.dates));
+                window.location.href = "User profile.html";
+            }
+        }
+
+        renderDates();
+    </script>
+</body>
+</html>

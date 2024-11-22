@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="GatherUp - PLAN YOUR OUTING NOW">
+    <meta name="keywords" content="outing, planner, GatherUp, friends, events">
+    <title>GatherUp</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="main">
+        <div class="navbar">
+            <div class="icon">
+                <h2 class="logo-text">TechNova</h2>
+            </div>
+            <nav class="menu">
+                <ul>
+                    <li><a href="#">HOME</a></li>
+                    <li><a href="#">ABOUT</a></li>
+                    <li><a href="#">SERVICE</a></li>
+                    <li><a href="#">DESIGN</a></li>
+                    <li><a href="#">CONTACT US</a></li>
+                </ul>
+            </nav>
+            <div class="search">
+                <input class="srch" type="search" placeholder="Type to search" aria-label="Search">
+                <button class="btn" aria-label="Search Button">Search</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="center-wrapper">
+        <div class="background-app-name">
+            <h1>GatherUp</h1>
+            <p>PLAN YOUR OUTING NOW</p>
+        </div>
+
+        <div class="login-container">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required aria-label="Username">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required aria-label="Password">
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript to handle form submission and store data in localStorage
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form from submitting the traditional way
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Store username in localStorage for the session
+            localStorage.setItem('username', username);
+            localStorage.setItem('password', password);
+
+            // Redirect to the dashboard page
+            window.location.href = 'dashboard.html';  // Ensure correct path
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .profile-container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .result {
+            margin-top: 10px;
+            color: #007bff;
+        }
+        #profile-pic-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="profile-container">
+        <h2>User Profile</h2>
+
+        <!-- Display Name and Picture -->
+        <div>
+            <label for="username">Username: </label>
+            <span id="usernameDisplay"></span>
+        </div>
+        <div>
+            <label for="profilePic">Profile Picture: </label>
+            <img id="profile-pic-preview" alt="Profile Preview" style="display: none;">
+        </div>
+        <div>
+            <label for="uploadPic">Upload Picture: </label>
+            <input type="file" id="uploadPic" accept="image/*">
+        </div>
+
+        <!-- Display Voting Results -->
+        <h3>Voting Results</h3>
+        <div id="votingResults">
+            <!-- Voting results will appear here -->
+        </div>
+
+        <!-- Email Reminder -->
+        <div>
+            <label for="emailInput">Enter your email to receive a reminder: </label>
+            <input type="email" id="emailInput" placeholder="Your email">
+            <button id="reminderBtn">Set Reminder</button>
+        </div>
+        <div id="reminderStatus"></div>
+    </div>
+
+    <script>
+        // Retrieve the username from localStorage
+        const username = localStorage.getItem("username");
+        if (!username) {
+            // Redirect to login if no username is found
+            window.location.href = "login.html";
+        }
+
+        // Display the username
+        document.getElementById("usernameDisplay").textContent = username;
+
+        // Retrieve and display profile picture if available
+        const profilePic = localStorage.getItem("profilePic");
+        const profilePicPreview = document.getElementById("profile-pic-preview");
+        if (profilePic) {
+            profilePicPreview.src = profilePic;
+            profilePicPreview.style.display = "block";
+        }
+
+        // Display voting results
+        const votingResults = JSON.parse(localStorage.getItem("votingResults")) || [];
+        function displayVotingResults() {
+            const resultsContainer = document.getElementById("votingResults");
+            resultsContainer.innerHTML = "";
+
+            if (votingResults.length === 0) {
+                resultsContainer.textContent = "No voting results available.";
+                return;
+            }
+
+            votingResults.forEach(dateObj => {
+                const dateItem = document.createElement("div");
+                dateItem.classList.add("result");
+                dateItem.textContent = `${dateObj.date} - Votes: ${dateObj.votes}`;
+                const votersList = document.createElement("div");
+                votersList.textContent = "Voters: " + dateObj.voters.join(", ");
+                dateItem.appendChild(votersList);
+                resultsContainer.appendChild(dateItem);
+            });
+        }
+
+        displayVotingResults();
+
+        // Upload profile picture
+        document.getElementById("uploadPic").addEventListener("change", function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageUrl = e.target.result;
+                    localStorage.setItem("profilePic", imageUrl);  // Save the image URL in localStorage
+                    profilePicPreview.src = imageUrl;
+                    profilePicPreview.style.display = "block";
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Set reminder functionality
+        document.getElementById("reminderBtn").addEventListener("click", function() {
+            const email = document.getElementById("emailInput").value;
+            if (email) {
+                // Simulate setting the reminder (in reality, you would need backend logic to send emails)
+                const reminderDate = new Date(new Date().getTime() + 3 * 24 * 60 * 60 * 1000); // 3 days later
+                const reminderMessage = `A reminder will be sent to ${email} for the outing on ${reminderDate.toDateString()}.`;
+
+                // Display reminder status
+                document.getElementById("reminderStatus").textContent = reminderMessage;
+            } else {
+                alert("Please enter a valid email.");
+            }
+        });
+    </script>
+
+</body>
+</html>
